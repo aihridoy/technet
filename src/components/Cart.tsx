@@ -21,13 +21,10 @@ import {
 } from '@/redux/features/cart/cartSlice';
 
 export default function Cart() {
-  const { products } = useAppSelector((state) => state.cart);
+  const { products, total } = useAppSelector((state) => state.cart);
   const typedProducts: IProduct[] = products;
 
   const dispatch = useAppDispatch();
-
-  // const products: IProduct[] = [];
-  const total = 0;
 
   return (
     <Sheet>
