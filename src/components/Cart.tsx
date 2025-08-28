@@ -13,14 +13,14 @@ import {
 } from 'react-icons/hi';
 import { Button } from './ui/button';
 import { IProduct } from '@/types/globalTypes';
+import { useAppSelector } from '@/redux/hook';
 
 export default function Cart() {
-  //! Dummy data
+  const { products } = useAppSelector((state) => state.cart);
+  const typedProducts: IProduct[] = products;
 
-  const products: IProduct[] = [];
+  // const products: IProduct[] = [];
   const total = 0;
-
-  //! **
 
   return (
     <Sheet>
@@ -35,7 +35,7 @@ export default function Cart() {
           <h1>Total: {total.toFixed(2)}</h1>
         </SheetHeader>
         <div className="space-y-5">
-          {products.map((product) => (
+          {typedProducts.map((product) => (
             <div
               className="border h-44 p-5 flex justify-between rounded-md"
               key={product.name}
@@ -47,8 +47,8 @@ export default function Cart() {
                 <h1 className="text-2xl self-center">{product?.name}</h1>
                 <p>Quantity: {product.quantity}</p>
                 <p className="text-xl">
-                  Total Price: {(product.price * product.quantity!).toFixed(2)}{' '}
-                  $
+                  Total Price:{' '}
+                  {(product.price * (product.quantity ?? 1)).toFixed(2)} $
                 </p>
               </div>
               <div className="border-l pl-5 flex flex-col justify-between">
