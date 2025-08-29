@@ -3,7 +3,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
-import { useGetPostsQuery } from '@/redux/api/apiSlice';
+import { useGetProductsQuery } from '@/redux/api/apiSlice';
 import {
   setPriceRange,
   toggleStatus,
@@ -13,7 +13,7 @@ import { IProduct } from '@/types/globalTypes';
 import { useDispatch } from 'react-redux';
 
 export default function Products() {
-  const { data } = useGetPostsQuery('data');
+  const { data } = useGetProductsQuery(undefined);
 
   const { toast } = useToast();
 

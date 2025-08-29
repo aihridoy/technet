@@ -3,10 +3,15 @@ export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8000' }),
   endpoints: (build) => ({
-    getPosts: build.query({
+    getProducts: build.query({
       query: () => ({ url: '/products' }),
+    }),
+    getProduct: build.query({
+      query: (id) => ({
+        url: `/product/${id}`,
+      }),
     }),
   }),
 });
 
-export const { useGetPostsQuery } = api;
+export const { useGetProductQuery, useGetProductsQuery } = api;
