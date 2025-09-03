@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL }),
+  tagTypes: ['Comment', 'Product'],
   endpoints: (build) => ({
     getProducts: build.query({
       query: () => ({ url: '/products' }),
@@ -17,6 +18,13 @@ export const api = createApi({
         method: 'POST',
         body: data,
       }),
+      invalidatesTags: ({ id }) => [{ type: 'Comment', id }],
+    }),
+    getComment: build.query({
+      query: (id) => ({
+        url: `/comment/${id}`,
+      }),
+      providesTags: (id) => [{ type: 'Comment', id }],
     }),
   }),
 });
@@ -24,5 +32,6 @@ export const api = createApi({
 export const {
   useGetProductQuery,
   useGetProductsQuery,
+  useGetCommentQuery,
   usePostCommentMutation,
 } = api;
