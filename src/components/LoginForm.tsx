@@ -1,18 +1,16 @@
 'use client';
 
-import * as React from 'react';
-
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
-import { useAppDispatch } from '@/redux/hook';
+import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { loginUser } from '@/redux/features/user/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
-
 interface LoginFormInputs {
   email: string;
   password: string;
@@ -20,14 +18,26 @@ interface LoginFormInputs {
 
 export function LoginForm({ className, ...props }: UserAuthFormProps) {
   const dispatch = useAppDispatch();
+  const { isLoading, isError, error } = useAppSelector((state) => state.user);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>();
 
-  const onSubmit = (data: LoginFormInputs) => {
-    dispatch(loginUser({ email: data.email, password: data.password }));
+  const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      const resultAction = await dispatch(
+        loginUser({ email: data.email, password: data.password })
+      );
+
+      if (loginUser.fulfilled.match(resultAction)) {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (
@@ -45,20 +55,38 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              {...register('email', { required: 'Email is required' })}
+              disabled={isLoading}
+              {...register('email', {
+                required: 'Email is required',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Invalid email address',
+                },
+              })}
             />
-            {errors.email && <p>{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-sm text-red-500">{errors.email.message}</p>
+            )}
+
             <Input
               id="password"
-              placeholder="your password"
+              placeholder="Your password"
               type="password"
               autoCapitalize="none"
-              autoComplete="password"
+              autoComplete="current-password"
+              disabled={isLoading}
               {...register('password', { required: 'Password is required' })}
             />
-            {errors.password && <p>{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-sm text-red-500">{errors.password.message}</p>
+            )}
           </div>
-          <Button>Login with email</Button>
+
+          {isError && error && <p className="text-sm text-red-500">{error}</p>}
+
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Logging in...' : 'Login with email'}
+          </Button>
         </div>
       </form>
       <div className="relative">
@@ -74,6 +102,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
       <Button
         variant="outline"
         type="button"
+        disabled={isLoading}
         className="flex items-center justify-between"
       >
         <p>Google</p>
