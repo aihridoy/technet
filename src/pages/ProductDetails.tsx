@@ -1,12 +1,23 @@
 import ProductReview from '@/components/ProductReview';
 import { Button } from '@/components/ui/button';
+import { addToCart } from '@/redux/features/cart/cartSlice';
 import { useGetProductQuery } from '@/redux/features/products/productApi';
+import { useAppDispatch } from '@/redux/hook';
+import { IProduct } from '@/types/globalTypes';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from '../components/ui/use-toast';
 
 export default function ProductDetails() {
   const { id } = useParams();
   const { data } = useGetProductQuery(id);
+  const dispatch = useAppDispatch();
+  const handleAddProduct = (product: IProduct) => {
+    dispatch(addToCart(product));
+    toast({
+      description: 'Product Added',
+    });
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -37,7 +48,12 @@ export default function ProductDetails() {
             </ul>
           )}
 
-          <Button className="w-full md:w-auto">Add to cart</Button>
+          <Button
+            onClick={() => handleAddProduct(data)}
+            className="w-full md:w-auto"
+          >
+            Add to cart
+          </Button>
         </div>
       </div>
 
