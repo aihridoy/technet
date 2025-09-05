@@ -12,124 +12,145 @@ import { useState } from 'react';
 
 export default function Checkout() {
   const [scheduled, setScheduled] = useState<boolean>(false);
-
   const { products, total } = useAppSelector((state) => state.cart);
   const typedProducts: IProduct[] = products;
 
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-80px)] gap-10 text-primary">
-      <div className="max-w-3xl w-full">
-        <h1 className="mb-2">Delivery Information</h1>
-        <div className="h-[60vh] border border-gray-300 rounded-md p-10 overflow-auto">
-          <div className="flex gap-5">
+    <div className="flex flex-col md:flex-row justify-center items-start gap-10 p-4 md:p-10 text-primary">
+      {/* Delivery Information */}
+      <div className="w-full md:w-2/3 max-w-3xl">
+        <h1 className="mb-2 text-xl md:text-2xl font-semibold">
+          Delivery Information
+        </h1>
+        <div className="border border-gray-300 rounded-md p-5 md:p-10 max-h-[70vh] overflow-auto space-y-5">
+          <div className="flex flex-col md:flex-row gap-5">
             <div className="w-full space-y-5">
               <div>
                 <Label htmlFor="name">Name</Label>
                 <Input type="text" id="name" className="mt-2" />
               </div>
               <div>
-                <Label htmlFor="name">Email</Label>
-                <Input type="text" id="name" className="mt-2" />
+                <Label htmlFor="email">Email</Label>
+                <Input type="text" id="email" className="mt-2" />
               </div>
             </div>
             <div className="w-full space-y-5">
               <div>
-                <Label htmlFor="name">Phone</Label>
-                <Input type="text" id="name" className="mt-2" />
+                <Label htmlFor="phone">Phone</Label>
+                <Input type="text" id="phone" className="mt-2" />
               </div>
               <div>
-                <Label htmlFor="name">City</Label>
-                <Input type="text" id="name" className="mt-2" />
+                <Label htmlFor="city">City</Label>
+                <Input type="text" id="city" className="mt-2" />
               </div>
             </div>
           </div>
-          <div className="mt-5">
-            <Label htmlFor="name">Address</Label>
-            <Textarea id="name" className="mt-2" />
+
+          <div>
+            <Label htmlFor="address">Address</Label>
+            <Textarea id="address" className="mt-2" />
           </div>
-          <div className="flex items-center gap-2 mt-5">
+
+          <div className="flex items-center gap-2">
             <Label className="text-lg">Scheduled Delivery</Label>
             <Switch onClick={() => setScheduled(!scheduled)} />
           </div>
-          <div className="flex gap-5 mt-5">
+
+          <div className="flex flex-col sm:flex-row gap-5">
             <div className="w-full">
               <Label htmlFor="note">Note</Label>
               <Input
                 disabled={!scheduled}
                 type="text"
                 id="note"
-                className="mt-3"
+                className="mt-2"
               />
             </div>
             <div className="w-full flex flex-col mt-2">
-              <Label className="mb-3" htmlFor="name">
+              <Label className="mb-2" htmlFor="date">
                 Date
               </Label>
               <DatePickerWithPresets disabled={!scheduled} />
             </div>
           </div>
-          <div className="mt-3">
+
+          <div>
             <Label className="text-lg">Payment method</Label>
-            <div className="flex gap-5 mt-5">
-              <RadioGroup defaultValue="comfortable" className="flex">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="online"
-                    id="r1"
-                    className="border border-gray-400"
-                  />
-                  <Label htmlFor="r1">Online payment</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="cash"
-                    id="r2"
-                    className="border border-gray-400"
-                  />
-                  <Label htmlFor="r2">Cash on delivery</Label>
-                </div>
-              </RadioGroup>
-            </div>
+            <RadioGroup
+              defaultValue="online"
+              className="flex flex-col sm:flex-row gap-5 mt-3"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="online"
+                  id="r1"
+                  className="border border-gray-400"
+                />
+                <Label htmlFor="r1">Online payment</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="cash"
+                  id="r2"
+                  className="border border-gray-400"
+                />
+                <Label htmlFor="r2">Cash on delivery</Label>
+              </div>
+            </RadioGroup>
           </div>
         </div>
       </div>
-      <div className="max-w-lg w-full">
-        <h1 className="mb-2">Order Summery</h1>
-        <div className="border border-gray-300 rounded-md h-[60vh] p-10 flex flex-col">
-          <div className="flex-grow  mb-2 space-y-2 overflow-auto">
+
+      {/* Order Summary */}
+      <div className="w-full md:w-1/3 max-w-lg">
+        <h1 className="mb-2 text-xl md:text-2xl font-semibold">
+          Order Summary
+        </h1>
+        <div className="border border-gray-300 rounded-md p-5 md:p-10 max-h-[70vh] flex flex-col">
+          <div className="flex-grow space-y-2 overflow-auto mb-4">
             {typedProducts.map((product) => (
-              <div className="flex justify-between items-center bg-gray-100 p-1 rounded-lg">
-                <div className="flex items-center">
+              <div
+                key={product._id}
+                className="flex justify-between items-center bg-gray-100 p-2 rounded-lg"
+              >
+                <div className="flex items-center gap-2">
                   <img
                     src={product.image}
-                    className="h-[82px] rounded-md mr-2"
+                    className="h-[80px] w-[80px] rounded-md object-cover"
                     alt=""
                   />
                   <div>
-                    <h1 className="text-lg mb-2">{product.name}</h1>
-                    <p>Price: {product.price}</p>
+                    <h1 className="text-sm md:text-lg font-medium">
+                      {product.name}
+                    </h1>
+                    <p className="text-sm md:text-base">
+                      Price: {product.price}$
+                    </p>
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-4xl mr-5">{product.quantity}</h1>
+                  <h1 className="text-lg md:text-2xl font-bold">
+                    {product.quantity}
+                  </h1>
                 </div>
               </div>
             ))}
           </div>
+
           <div className="space-y-2">
-            <div className="flex justify-between text-lg">
+            <div className="flex justify-between text-base md:text-lg">
               <p>Subtotal</p>
               <p>{total.toFixed(2)}$</p>
             </div>
-            <div className="flex justify-between text-lg">
+            <div className="flex justify-between text-base md:text-lg">
               <p>Delivery</p>
               <p>4.5$</p>
             </div>
-            <div className="flex justify-between text-xl font-bold">
+            <div className="flex justify-between text-lg md:text-xl font-bold">
               <p>Total</p>
-              <p>{(total + Number(4.5)).toFixed(2)}$</p>
+              <p>{(total + 4.5).toFixed(2)}$</p>
             </div>
-            <Button className="w-full">Checkout</Button>
+            <Button className="w-full mt-2">Checkout</Button>
           </div>
         </div>
       </div>
