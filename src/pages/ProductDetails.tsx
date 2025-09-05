@@ -1,11 +1,16 @@
 import ProductReview from '@/components/ProductReview';
 import { Button } from '@/components/ui/button';
 import { useGetProductQuery } from '@/redux/features/products/productApi';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 export default function ProductDetails() {
   const { id } = useParams();
   const { data } = useGetProductQuery(id);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   return (
     <>

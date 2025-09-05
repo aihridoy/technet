@@ -9,6 +9,7 @@ import {
 } from '@/redux/features/products/productSlice';
 import { useAppSelector } from '@/redux/hook';
 import { IProduct } from '@/types/globalTypes';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 export default function Products() {
@@ -35,6 +36,10 @@ export default function Products() {
   } else {
     productsData = data?.data;
   }
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   return (
     <div className="grid grid-cols-12 max-w-7xl mx-auto relative ">
