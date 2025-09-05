@@ -14,21 +14,34 @@ export default function ProductDetails() {
 
   return (
     <>
-      <div className="flex max-w-7xl mx-auto items-center border-b border-gray-300">
-        <div className="w-[50%]">
-          <img src={data?.image} alt="" />
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center border-b border-gray-300 p-4 md:p-8 gap-6">
+        {/* Product Image */}
+        <div className="w-full md:w-1/2 flex justify-center">
+          <img
+            src={data?.image}
+            alt={data?.name}
+            className="object-contain max-h-[400px] w-full"
+          />
         </div>
-        <div className="w-[50%] space-y-3">
-          <h1 className="text-3xl font-semibold">{data?.name}</h1>
-          <p className="text-xl">Rating: {data?.rating}</p>
-          <ul className="space-y-1 text-lg">
-            {data?.features?.map((feature: string) => (
-              <li key={feature}>{feature}</li>
-            ))}
-          </ul>
-          <Button>Add to cart</Button>
+
+        {/* Product Info */}
+        <div className="w-full md:w-1/2 space-y-4">
+          <h1 className="text-2xl md:text-3xl font-semibold">{data?.name}</h1>
+          <p className="text-lg md:text-xl">Rating: {data?.rating}</p>
+
+          {data?.features && (
+            <ul className="space-y-1 text-base md:text-lg list-disc list-inside">
+              {data.features.map((feature: string) => (
+                <li key={feature}>{feature}</li>
+              ))}
+            </ul>
+          )}
+
+          <Button className="w-full md:w-auto">Add to cart</Button>
         </div>
       </div>
+
+      {/* Product Reviews */}
       {id && <ProductReview id={id} />}
     </>
   );
