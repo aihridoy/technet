@@ -41,10 +41,10 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
   };
 
   return (
-    <div className={cn('grid gap-6', className)} {...props}>
+    <div className={cn('grid gap-4 sm:gap-6', className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid gap-2">
-          <div className="grid gap-1">
+        <div className="grid gap-4">
+          <div className="grid gap-3">
             <Label className="sr-only" htmlFor="email">
               Email
             </Label>
@@ -56,6 +56,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
+              className="h-10 sm:h-11"
               {...register('email', {
                 required: 'Email is required',
                 pattern: {
@@ -65,7 +66,9 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
               })}
             />
             {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
+              <p className="text-xs text-red-500 sm:text-sm">
+                {errors.email.message}
+              </p>
             )}
 
             <Input
@@ -75,20 +78,30 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
               autoCapitalize="none"
               autoComplete="current-password"
               disabled={isLoading}
+              className="h-10 sm:h-11"
               {...register('password', { required: 'Password is required' })}
             />
             {errors.password && (
-              <p className="text-sm text-red-500">{errors.password.message}</p>
+              <p className="text-xs text-red-500 sm:text-sm">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
-          {isError && error && <p className="text-sm text-red-500">{error}</p>}
+          {isError && error && (
+            <p className="text-xs text-red-500 sm:text-sm">{error}</p>
+          )}
 
-          <Button type="submit" disabled={isLoading}>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="h-10 text-sm sm:h-11 sm:text-base"
+          >
             {isLoading ? 'Logging in...' : 'Login with email'}
           </Button>
         </div>
       </form>
+
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
@@ -99,14 +112,15 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
+
       <Button
         variant="outline"
         type="button"
         disabled={isLoading}
-        className="flex items-center justify-between"
+        className="h-10 flex items-center justify-center gap-2 text-sm sm:h-11 sm:text-base"
       >
-        <p>Google</p>
-        <FcGoogle />
+        <FcGoogle className="h-4 w-4 sm:h-5 sm:w-5" />
+        <span>Continue with Google</span>
       </Button>
     </div>
   );
