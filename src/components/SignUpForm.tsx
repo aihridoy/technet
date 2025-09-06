@@ -9,6 +9,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { createUser, logoutUser } from '@/redux/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { useNavigate } from 'react-router-dom';
+import { useAddUserMutation } from '@/redux/features/user/userApi';
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -21,6 +22,7 @@ interface SignupFormInputs {
 export function SignupForm({ className, ...props }: UserAuthFormProps) {
   const dispatch = useAppDispatch();
   const { isLoading, isError, error } = useAppSelector((state) => state.user);
+  const [addUser] = useAddUserMutation();
   const navigate = useNavigate();
   const {
     register,
@@ -40,12 +42,20 @@ export function SignupForm({ className, ...props }: UserAuthFormProps) {
         })
       );
 
-      // Check if the action was fulfilled (successful)
       if (createUser.fulfilled.match(resultAction)) {
-        // Clear the user state so LoginForm doesn't redirect
-        dispatch(logoutUser());
-        // User created successfully, navigate to login
-        navigate('/login');
+        const userData = {
+          email: data.email,
+          createdAt: new Date().toISOString(),
+        };
+
+        const backendResponse = await addUser(userData).unwrap();
+
+        if (backendResponse) {
+          dispatch(logoutUser());
+          navigate('/login');
+        } else {
+          throw new Error('Failed to add user to database');
+        }
       }
     } catch (error) {
       console.error('Signup failed:', error);
