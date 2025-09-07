@@ -140,7 +140,7 @@ export default function Products() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-0 lg:px-0">
       {/* Mobile Filter Toggle Button */}
       <div className="lg:hidden mb-4">
         <button

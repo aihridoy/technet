@@ -24,6 +24,9 @@ const productApi = api.injectEndpoints({
       }),
       providesTags: (id) => [{ type: 'Comment', id }],
     }),
+    searchProducts: build.query({
+      query: (name) => ({ url: `/search?name=${name}` }),
+    }),
   }),
 });
 
@@ -32,4 +35,5 @@ export const {
   useGetProductsQuery,
   useGetCommentQuery,
   usePostCommentMutation,
+  useSearchProductsQuery,
 } = productApi;
