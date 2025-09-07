@@ -77,16 +77,10 @@ export default function Navbar() {
                   <Link to="/profile">
                     <DropdownMenuItem>Profile</DropdownMenuItem>
                   </Link>
-                  <DropdownMenuItem>Billing</DropdownMenuItem>
-                  <DropdownMenuItem>Team</DropdownMenuItem>
-                  <DropdownMenuItem>Subscription</DropdownMenuItem>
                   {!user.email && (
                     <>
                       <Link to="/login">
                         <DropdownMenuItem>Login</DropdownMenuItem>
-                      </Link>
-                      <Link to="/signup">
-                        <DropdownMenuItem>Signup</DropdownMenuItem>
                       </Link>
                     </>
                   )}
