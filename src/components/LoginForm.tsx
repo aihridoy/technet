@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
-import { loginUser } from '@/redux/features/user/userSlice';
+import { loginUser, signInWithGoogle } from '@/redux/features/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
@@ -37,6 +37,18 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
       }
     } catch (error) {
       console.error('Login failed:', error);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const resultAction = await dispatch(signInWithGoogle());
+
+      if (signInWithGoogle.fulfilled.match(resultAction)) {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Google sign-in failed:', error);
     }
   };
 
@@ -117,6 +129,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
         variant="outline"
         type="button"
         disabled={isLoading}
+        onClick={handleGoogleSignIn}
         className="h-10 flex items-center justify-center gap-2 text-sm sm:h-11 sm:text-base"
       >
         <FcGoogle className="h-4 w-4 sm:h-5 sm:w-5" />

@@ -3,7 +3,6 @@ import { useGetProductsQuery } from '@/redux/features/products/productApi';
 import Hero from '@/components/Hero';
 import ShowProducts from '@/components/ShowProducts';
 import Featured from '@/components/Featured';
-import Footer from '@/components/Footer';
 
 interface Product {
   _id: string;

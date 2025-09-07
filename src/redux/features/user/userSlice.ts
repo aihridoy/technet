@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 interface IUser {
@@ -40,6 +42,20 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }: ICredentials) => {
     const data = await signInWithEmailAndPassword(auth, email, password);
     return data.user.email;
+  }
+);
+
+export const signInWithGoogle = createAsyncThunk(
+  'user/signInWithGoogle',
+  async () => {
+    const provider = new GoogleAuthProvider();
+    const data = await signInWithPopup(auth, provider);
+    return {
+      email: data.user.email,
+      displayName: data.user.displayName,
+      photoURL: data.user.photoURL,
+      uid: data.user.uid,
+    };
   }
 );
 
@@ -82,6 +98,21 @@ const userSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.user.email = null;
+        state.isLoading = false;
+        state.isError = true;
+        state.error = action.error.message!;
+      })
+      .addCase(signInWithGoogle.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.error = null;
+      })
+      .addCase(signInWithGoogle.fulfilled, (state, action) => {
+        state.user.email = action.payload.email;
+        state.isLoading = false;
+      })
+      .addCase(signInWithGoogle.rejected, (state, action) => {
         state.user.email = null;
         state.isLoading = false;
         state.isError = true;

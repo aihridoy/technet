@@ -6,7 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
-import { createUser, logoutUser } from '@/redux/features/user/userSlice';
+import {
+  createUser,
+  logoutUser,
+  signInWithGoogle,
+} from '@/redux/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { useNavigate } from 'react-router-dom';
 import { useAddUserMutation } from '@/redux/features/user/userApi';
@@ -59,6 +63,32 @@ export function SignupForm({ className, ...props }: UserAuthFormProps) {
       }
     } catch (error) {
       console.error('Signup failed:', error);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const resultAction = await dispatch(signInWithGoogle());
+
+      if (signInWithGoogle.fulfilled.match(resultAction)) {
+        const userData = {
+          email: resultAction.payload.email,
+          createdAt: new Date().toISOString(),
+          displayName: resultAction.payload.displayName,
+          photoURL: resultAction.payload.photoURL,
+        };
+
+        const backendResponse = await addUser(userData).unwrap();
+
+        if (backendResponse) {
+          dispatch(logoutUser());
+          navigate('/');
+        } else {
+          throw new Error('Failed to add user to database');
+        }
+      }
+    } catch (error) {
+      console.error('Google sign-in failed:', error);
     }
   };
 
@@ -165,6 +195,7 @@ export function SignupForm({ className, ...props }: UserAuthFormProps) {
         variant="outline"
         type="button"
         disabled={isLoading}
+        onClick={handleGoogleSignIn}
         className="h-10 flex items-center justify-center gap-2 text-sm sm:h-11 sm:text-base"
       >
         <FcGoogle className="h-4 w-4 sm:h-5 sm:w-5" />
