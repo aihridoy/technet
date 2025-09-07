@@ -1,5 +1,79 @@
+'use client';
+
+import { useState } from 'react';
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [email, setEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<
+    'idle' | 'success' | 'error'
+  >('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Reset states
+    setErrorMessage('');
+
+    // Validation
+    if (!email.trim()) {
+      setErrorMessage('Email address is required');
+      setSubscriptionStatus('error');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setErrorMessage('Please enter a valid email address');
+      setSubscriptionStatus('error');
+      return;
+    }
+
+    // Mock subscription process
+    setIsSubscribing(true);
+    setSubscriptionStatus('idle');
+
+    try {
+      // Simulate API call
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Simulate random success/failure (90% success rate)
+          if (Math.random() > 0.1) {
+            resolve('success');
+          } else {
+            reject(new Error('Network error'));
+          }
+        }, 2000);
+      });
+
+      // Success
+      setSubscriptionStatus('success');
+      setEmail('');
+
+      // Reset success message after 5 seconds
+      setTimeout(() => {
+        setSubscriptionStatus('idle');
+      }, 5000);
+    } catch (error) {
+      // Error handling
+      setSubscriptionStatus('error');
+      setErrorMessage('Something went wrong. Please try again.');
+
+      // Reset error after 5 seconds
+      setTimeout(() => {
+        setSubscriptionStatus('idle');
+        setErrorMessage('');
+      }, 5000);
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -179,29 +253,193 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Newsletter Subscription */}
+        {/* Newsletter Subscription - Enhanced */}
         <div className="mt-16 pt-12 border-t border-gray-800">
-          <div className="max-w-md mx-auto text-center">
-            <h3 className="text-xl font-bold mb-4">Stay Updated</h3>
-            <p className="text-gray-400 mb-6">
-              Get the latest news about new products and exclusive offers
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1 relative">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                />
+          <div className="max-w-lg mx-auto text-center">
+            <div className="mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-4">
+                <svg
+                  className="w-8 h-8 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
               </div>
-              <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                Subscribe
-              </button>
+              <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Stay in the Loop
+              </h3>
+              <p className="text-gray-400">
+                Be the first to know about new product launches, exclusive
+                offers, and tech insights
+              </p>
             </div>
-            <p className="text-xs text-gray-500 mt-3">
-              By subscribing, you agree to our Privacy Policy and Terms of
-              Service
-            </p>
+
+            {/* Subscription Form */}
+            <form onSubmit={handleSubscribe} className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1 relative">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    disabled={isSubscribing}
+                    className={`w-full px-4 py-3 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 ${
+                      subscriptionStatus === 'error'
+                        ? 'border-red-500 focus:ring-red-500'
+                        : subscriptionStatus === 'success'
+                        ? 'border-green-500 focus:ring-green-500'
+                        : 'border-gray-700 focus:ring-blue-500'
+                    } ${isSubscribing ? 'opacity-75 cursor-not-allowed' : ''}`}
+                  />
+
+                  {/* Status Icons */}
+                  {subscriptionStatus === 'success' && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <svg
+                        className="w-5 h-5 text-green-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                  )}
+
+                  {subscriptionStatus === 'error' && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <svg
+                        className="w-5 h-5 text-red-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubscribing || subscriptionStatus === 'success'}
+                  className={`px-8 py-3 font-semibold rounded-lg transition-all duration-300 transform shadow-lg min-w-[120px] ${
+                    isSubscribing
+                      ? 'bg-gray-600 cursor-not-allowed text-gray-300'
+                      : subscriptionStatus === 'success'
+                      ? 'bg-green-600 text-white cursor-default'
+                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:scale-105 hover:shadow-xl'
+                  }`}
+                >
+                  {isSubscribing ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <svg
+                        className="animate-spin h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <span>Subscribing...</span>
+                    </div>
+                  ) : subscriptionStatus === 'success' ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span>Subscribed!</span>
+                    </div>
+                  ) : (
+                    'Subscribe'
+                  )}
+                </button>
+              </div>
+
+              {/* Status Messages */}
+              {subscriptionStatus === 'success' && (
+                <div className="bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg text-sm animate-fade-in">
+                  <div className="flex items-center justify-center gap-2">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>
+                      Welcome aboard! Check your email to get regular insights.
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {subscriptionStatus === 'error' && errorMessage && (
+                <div className="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-sm animate-fade-in">
+                  <div className="flex items-center justify-center gap-2">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>{errorMessage}</span>
+                  </div>
+                </div>
+              )}
+            </form>
           </div>
         </div>
       </div>
@@ -319,6 +557,23 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+      `}</style>
     </footer>
   );
 }

@@ -138,7 +138,7 @@ export default function Profile() {
                         $
                         {userOrders
                           .reduce(
-                            (sum: any, order: { total: any }) =>
+                            (sum: number, order: { total: number }) =>
                               sum + order.total,
                             0
                           )

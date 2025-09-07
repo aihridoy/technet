@@ -134,9 +134,6 @@ export default function Home(): JSX.Element {
 
       {/* Features Grid */}
       <Featured />
-
-      {/* Footer */}
-      <Footer />
     </>
   );
 }
