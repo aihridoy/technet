@@ -16,7 +16,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { setUser } from '@/redux/features/user/userSlice';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSearchProductsQuery } from '@/redux/features/products/productApi';
 
 interface Product {
@@ -36,19 +36,29 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 800);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchTerm]);
+
   const { data: searchResults, isLoading } = useSearchProductsQuery(
-    searchTerm,
+    debouncedSearchTerm,
     {
-      skip: !searchTerm || searchTerm.length < 2,
+      skip: !debouncedSearchTerm || debouncedSearchTerm.length < 2,
     }
   );
 
   const products: Product[] = searchResults?.data || [];
 
-  // Close search popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -65,7 +75,6 @@ export default function Navbar() {
     };
   }, []);
 
-  // Show/hide search results based on search term
   useEffect(() => {
     if (searchTerm.length >= 2) {
       setShowSearchResults(true);
@@ -80,19 +89,21 @@ export default function Navbar() {
     });
   };
 
-  const handleSearchInputChange = (value: string) => {
+  const handleSearchInputChange = useCallback((value: string) => {
     setSearchTerm(value);
-  };
+  }, []);
 
   const handleProductClick = (productId: string) => {
     navigate(`/product-details/${productId}`);
     setSearchTerm('');
+    setDebouncedSearchTerm('');
     setShowSearchResults(false);
     setMobileMenuOpen(false);
   };
 
   const clearSearch = () => {
     setSearchTerm('');
+    setDebouncedSearchTerm('');
     setShowSearchResults(false);
   };
 
@@ -109,11 +120,13 @@ export default function Navbar() {
         <div className="p-4 text-center text-gray-500">Searching...</div>
       )}
 
-      {!isLoading && searchTerm.length >= 2 && products.length === 0 && (
-        <div className="p-4 text-center text-gray-500">
-          No products found for "{searchTerm}"
-        </div>
-      )}
+      {!isLoading &&
+        debouncedSearchTerm.length >= 2 &&
+        products.length === 0 && (
+          <div className="p-4 text-center text-gray-500">
+            No products found for "{debouncedSearchTerm}"
+          </div>
+        )}
 
       {!isLoading && products.length > 0 && (
         <div className="py-2">
