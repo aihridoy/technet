@@ -10,7 +10,13 @@ const userApi = api.injectEndpoints({
       }),
       invalidatesTags: ['User'],
     }),
+    getUser: build.query({
+      query: (email) => ({
+        url: `/user/${email}`,
+      }),
+      providesTags: ['User'],
+    }),
   }),
 });
 
-export const { useAddUserMutation } = userApi;
+export const { useAddUserMutation, useGetUserQuery } = userApi;

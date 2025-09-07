@@ -74,7 +74,9 @@ export default function Navbar() {
                 <DropdownMenuContent>
                   <DropdownMenuLabel>Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <Link to="/profile">
+                    <DropdownMenuItem>Profile</DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem>Billing</DropdownMenuItem>
                   <DropdownMenuItem>Team</DropdownMenuItem>
                   <DropdownMenuItem>Subscription</DropdownMenuItem>

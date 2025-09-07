@@ -22,10 +22,19 @@ import {
 
 interface IProps {
   disabled?: boolean;
+  onDateChange?: (date: Date | undefined) => void; // Add onDateChange prop
 }
 
-export function DatePickerWithPresets({ disabled }: IProps) {
-  const [date, setDate] = React.useState<Date>();
+export function DatePickerWithPresets({ disabled, onDateChange }: IProps) {
+  const [date, setDate] = React.useState<Date | undefined>();
+
+  // Handle date change and notify parent component
+  const handleDateChange = (newDate: Date | undefined) => {
+    setDate(newDate);
+    if (onDateChange) {
+      onDateChange(newDate);
+    }
+  };
 
   return (
     <Popover>
@@ -45,7 +54,7 @@ export function DatePickerWithPresets({ disabled }: IProps) {
       <PopoverContent className="flex w-auto flex-col space-y-2 p-2">
         <Select
           onValueChange={(value) =>
-            setDate(addDays(new Date(), parseInt(value)))
+            handleDateChange(addDays(new Date(), parseInt(value)))
           }
         >
           <SelectTrigger>
@@ -59,7 +68,7 @@ export function DatePickerWithPresets({ disabled }: IProps) {
           </SelectContent>
         </Select>
         <div className="rounded-md border">
-          <Calendar mode="single" selected={date} onSelect={setDate} />
+          <Calendar mode="single" selected={date} onSelect={handleDateChange} />
         </div>
       </PopoverContent>
     </Popover>
