@@ -8,7 +8,7 @@ Welcome to **Tech Net**, your premier destination for cutting-edge Haylou smartw
 
 ## 🌟 Live Demo
 
-**🔗 [Visit Tech Net Store](#)**
+**🔗 [Visit Tech Net Store](https://awesometechnet.netlify.app) | [Backend Repo](https://github.com/aihridoy/technet-server)**
 
 Experience the future of wearable technology with our complete Haylou smartwatch collection!
 
