@@ -92,16 +92,11 @@ export default function Hero({ isVisible, setShowVideoModal }: HeroProps) {
               Watch Demo
               <svg
                 className="ml-2 w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.5a1.5 1.5 0 011.5 1.5v1.5m-3-5V7a2 2 0 012-2h4a2 2 0 012 2v3.5"
-                />
+                <path d="M6.5 5.5v9l7-4.5-7-4.5z" />
               </svg>
             </Button>
           </div>

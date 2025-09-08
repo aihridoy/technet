@@ -46,7 +46,9 @@ interface Order {
 
 export default function Profile() {
   const { user } = useAppSelector((state) => state.user);
-  const { data, isLoading, error } = useGetOrdersQuery(undefined);
+  const { data, isLoading, error } = useGetOrdersQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   // Filter orders by user email
   const userOrders = user?.email

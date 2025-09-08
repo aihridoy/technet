@@ -36,7 +36,7 @@ export function OrderConfirmation() {
             variant="outline"
             className="border-gray-300 hover:bg-gray-100"
           >
-            <Link to="/orders">View My Orders</Link>
+            <Link to="/profile">View My Orders</Link>
           </Button>
         </div>
       </motion.div>
