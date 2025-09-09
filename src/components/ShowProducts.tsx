@@ -15,12 +15,154 @@ interface Product {
 interface ShowProductsProps {
   featuredProducts: Product[];
   renderStars: (rating: number) => React.ReactNode;
+  isLoading: boolean;
+  isError: boolean;
 }
+
+// Skeleton component for individual product cards
+const ProductCardSkeleton = () => (
+  <div className="group bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
+    <div className="relative overflow-hidden">
+      <div className="w-full h-64 bg-gray-200"></div>
+      <div className="absolute top-4 right-4">
+        <div className="bg-gray-200 rounded-full w-16 h-6"></div>
+      </div>
+    </div>
+
+    <div className="p-6">
+      <div className="h-6 bg-gray-200 rounded-lg mb-2 w-3/4"></div>
+
+      {/* Stars skeleton */}
+      <div className="flex space-x-1 mb-4">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="w-4 h-4 bg-gray-200 rounded-sm"></div>
+        ))}
+      </div>
+
+      <div className="mt-4 mb-4">
+        <div className="h-8 bg-gray-200 rounded-lg w-20"></div>
+      </div>
+
+      <div className="space-y-2 mb-6">
+        <div className="flex items-center">
+          <div className="w-4 h-4 bg-gray-200 rounded mr-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-32"></div>
+        </div>
+        <div className="flex items-center">
+          <div className="w-4 h-4 bg-gray-200 rounded mr-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-28"></div>
+        </div>
+      </div>
+
+      <div className="w-full h-12 bg-gray-200 rounded-xl"></div>
+    </div>
+  </div>
+);
+
+// Skeleton for featured products section
+const FeaturedProductsSkeleton = () => (
+  <div className="mb-20 relative">
+    <div className="text-center mb-12">
+      <div className="inline-block w-40 h-10 bg-gray-200 rounded-full mb-4 animate-pulse"></div>
+      <div className="h-10 bg-gray-200 rounded-lg mb-4 max-w-md mx-auto animate-pulse"></div>
+      <div className="h-6 bg-gray-200 rounded-lg max-w-2xl mx-auto animate-pulse"></div>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {[...Array(6)].map((_, index) => (
+        <ProductCardSkeleton key={index} />
+      ))}
+    </div>
+  </div>
+);
+
+// Main content skeleton
+const MainContentSkeleton = () => (
+  <div className="text-center">
+    <div className="mb-8">
+      <div className="inline-block w-48 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+    </div>
+
+    <div className="mb-8 space-y-4">
+      <div className="h-16 bg-gray-200 rounded-lg max-w-4xl mx-auto animate-pulse"></div>
+      <div className="h-16 bg-gray-200 rounded-lg max-w-2xl mx-auto animate-pulse"></div>
+    </div>
+
+    <div className="h-6 bg-gray-200 rounded-lg mb-12 max-w-2xl mx-auto animate-pulse"></div>
+
+    <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+      <div className="w-64 h-14 bg-gray-200 rounded-xl animate-pulse"></div>
+      <div className="flex items-center space-x-4">
+        <div className="flex -space-x-2">
+          <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+          <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+        </div>
+        <div className="w-32 h-4 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    </div>
+  </div>
+);
 
 export default function ShowProducts({
   featuredProducts,
   renderStars,
+  isLoading,
+  isError,
 }: ShowProductsProps) {
+  // Error state
+  if (isError) {
+    return (
+      <div className="relative py-24 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-0 lg:px-0">
+          <div className="text-center">
+            <div className="mb-8">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-8 h-8 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Something went wrong
+              </h3>
+              <p className="text-gray-600 mb-6">
+                We couldn't load the products. Please try again later.
+              </p>
+              <Button
+                onClick={() => window.location.reload()}
+                className="py-3 px-6 rounded-xl"
+              >
+                Try Again
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="relative py-24 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-0 lg:px-0">
+          <FeaturedProductsSkeleton />
+          <MainContentSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  // Loaded state
   return (
     <div className="relative py-24 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-0 lg:px-0">

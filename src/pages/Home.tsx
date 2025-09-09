@@ -15,13 +15,8 @@ interface Product {
   comments: string[];
 }
 
-interface ApiResponse {
-  status: boolean;
-  data: Product[];
-}
-
 export default function Home(): JSX.Element {
-  const { data }: { data?: ApiResponse } = useGetProductsQuery(undefined);
+  const { data, isLoading, isError } = useGetProductsQuery(undefined);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [showVideoModal, setShowVideoModal] = useState<boolean>(false);
 
@@ -129,6 +124,8 @@ export default function Home(): JSX.Element {
       <ShowProducts
         featuredProducts={featuredProducts}
         renderStars={renderStars}
+        isLoading={isLoading}
+        isError={isError}
       />
 
       {/* Features Grid */}
