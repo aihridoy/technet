@@ -8,6 +8,7 @@ import Products from '@/pages/Products';
 import Checkout from '@/pages/Checkout';
 import Signup from '@/pages/Signup';
 import ProductDetails from '@/pages/ProductDetails';
+import Wishlist from '@/pages/Wishlist';
 import PrivateRoute from './PrivateRoute';
 import { OrderConfirmation } from '@/pages/OrderSuccess';
 import AdminRoute from './AdminRoute';
@@ -47,6 +48,10 @@ const routes = createBrowserRouter([
             <Checkout />
           </PrivateRoute>
         ),
+      },
+      {
+        path: '/wishlist',
+        element: <Wishlist />,
       },
       {
         path: '/admin',
