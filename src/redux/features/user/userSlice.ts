@@ -27,7 +27,7 @@ const initialState: IUser = {
     email: null,
     role: null,
   },
-  isLoading: false,
+  isLoading: true,
   isError: false,
   error: null,
 };
