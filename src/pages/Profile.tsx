@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetOrdersQuery } from '@/redux/features/order/orderApi';
+import { useGetMyOrdersQuery } from '@/redux/features/order/orderApi';
 import { useAppSelector } from '@/redux/hook';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,14 +46,12 @@ interface Order {
 
 export default function Profile() {
   const { user } = useAppSelector((state) => state.user);
-  const { data, isLoading, error } = useGetOrdersQuery(undefined, {
+  const { data, isLoading, error } = useGetMyOrdersQuery(undefined, {
     refetchOnMountOrArgChange: true,
+    skip: !user?.email,
   });
 
-  // Filter orders by user email
-  const userOrders = user?.email
-    ? data?.data?.filter((order: Order) => order.userEmail === user.email) || []
-    : [];
+  const userOrders = data?.data || [];
 
   const getStatusIcon = (status: string) => {
     switch (status) {
