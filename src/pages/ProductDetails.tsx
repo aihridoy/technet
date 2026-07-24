@@ -216,7 +216,7 @@ export default function ProductDetails() {
               <span className="text-lg md:text-xl">Rating:</span>
               <div className="flex items-center">
                 <span className="text-lg md:text-xl font-medium">
-                  {data.rating}
+                  {data.rating} <span className="text-sm text-gray-500">({data.ratingCount ?? 0} reviews)</span>
                 </span>
                 <div className="flex ml-2">
                   {Array.from({ length: 5 }).map((_, index) => (
