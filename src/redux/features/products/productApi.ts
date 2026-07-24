@@ -10,19 +10,23 @@ const productApi = api.injectEndpoints({
         url: `/product/${id}`,
       }),
     }),
-    postComment: build.mutation({
-      query: ({ id, data }) => ({
-        url: `/comment/${id}`,
+    addReview: build.mutation({
+      query: ({ productId, data }) => ({
+        url: `/product/${productId}/reviews`,
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ({ id }) => [{ type: 'Comment', id }],
+      invalidatesTags: (_result, _error, { productId }) => [
+        { type: 'Review', id: productId },
+      ],
     }),
-    getComment: build.query({
-      query: (id) => ({
-        url: `/comment/${id}`,
+    getReviews: build.query({
+      query: (productId) => ({
+        url: `/product/${productId}/reviews`,
       }),
-      providesTags: (id) => [{ type: 'Comment', id }],
+      providesTags: (_result, _error, productId) => [
+        { type: 'Review', id: productId },
+      ],
     }),
     searchProducts: build.query({
       query: (name) => ({ url: `/search?name=${name}` }),
@@ -33,7 +37,7 @@ const productApi = api.injectEndpoints({
 export const {
   useGetProductQuery,
   useGetProductsQuery,
-  useGetCommentQuery,
-  usePostCommentMutation,
+  useGetReviewsQuery,
+  useAddReviewMutation,
   useSearchProductsQuery,
 } = productApi;
