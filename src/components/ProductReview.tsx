@@ -11,6 +11,7 @@ import {
 } from '@/redux/features/products/productApi';
 import { useAppSelector } from '@/redux/hook';
 import { IReview } from '@/types/globalTypes';
+import { toast } from './ui/use-toast';
 
 interface IProps {
   id: string;
@@ -23,20 +24,27 @@ export default function ProductReview({ id }: IProps) {
   const [inputValue, setInputValue] = useState<string>('');
   const [selectedRating, setSelectedRating] = useState<number>(0);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!inputValue.trim() || selectedRating === 0 || !user?.email) return;
-    addReview({
-      productId: id,
-      data: {
-        authorEmail: user.email,
-        authorName: user.email.split('@')[0],
-        rating: selectedRating,
-        comment: inputValue,
-      },
-    });
-    setInputValue('');
-    setSelectedRating(0);
+    try {
+      await addReview({
+        productId: id,
+        data: {
+          authorEmail: user.email,
+          authorName: user.email.split('@')[0],
+          rating: selectedRating,
+          comment: inputValue,
+        },
+      }).unwrap();
+      setInputValue('');
+      setSelectedRating(0);
+    } catch (err) {
+      toast({
+        description: 'Failed to submit review. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
