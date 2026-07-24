@@ -17,6 +17,7 @@ export default function ProductReview({ id }: IProps) {
   const { data } = useGetReviewsQuery(id, { refetchOnMountOrArgChange: true });
   const [inputValue, setInputValue] = useState<string>('');
 
+  // Interim fallout fix for Task 6 — full review submission (author, rating) lands in Task 8
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!inputValue.trim()) return;
@@ -51,7 +52,7 @@ export default function ProductReview({ id }: IProps) {
 
       {/* Reviews List */}
       <div className="mt-8 space-y-5">
-        {(Array.isArray(data) ? data : data?.reviews)?.map((review: any, index: number) => (
+        {data?.data?.map((review: any, index: number) => (
           <div
             key={review._id || index}
             className="flex gap-3 items-start sm:items-center bg-gray-50 p-3 rounded-lg"
