@@ -12,7 +12,7 @@ export default function AuthListener({ children }: AuthListenerProps) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user?.email) {
         dispatch(fetchCurrentUser(user.email));
       } else {
@@ -20,6 +20,7 @@ export default function AuthListener({ children }: AuthListenerProps) {
         dispatch(setLoading(false));
       }
     });
+    return unsubscribe;
   }, [dispatch]);
 
   return <>{children}</>;
