@@ -2,7 +2,9 @@ import ProductReview from '@/components/ProductReview';
 import { Button } from '@/components/ui/button';
 import { addToCart } from '@/redux/features/cart/cartSlice';
 import { useGetProductQuery } from '@/redux/features/products/productApi';
+import { useGetWishlistQuery, useToggleWishlistMutation } from '@/redux/features/wishlist/wishlistApi';
 import { useAppDispatch } from '@/redux/hook';
+import { useAppSelector } from '@/redux/hook';
 import { IProduct } from '@/types/globalTypes';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -107,11 +109,19 @@ export default function ProductDetails() {
   const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useGetProductQuery(id);
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.user);
   const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  const { data: wishlistData } = useGetWishlistQuery(undefined, {
+    skip: !user?.email,
+  });
+  const [toggleWishlist] = useToggleWishlistMutation();
+
   const product: IProduct | undefined = data;
+
+  const wishlistItems = wishlistData?.data || [];
+  const isWishlisted = id ? wishlistItems.some((item: { productId: string }) => item.productId === id) : false;
 
   const handleAddProduct = () => {
     if (!product) return;
@@ -121,6 +131,42 @@ export default function ProductDetails() {
     toast({
       description: `${quantity} item${quantity > 1 ? 's' : ''} added to cart`,
     });
+  };
+
+  const handleWishlist = async () => {
+    if (!user?.email) {
+      toast({
+        description: 'Please log in to add to wishlist',
+        variant: 'destructive',
+      });
+      return;
+    }
+    try {
+      await toggleWishlist(id).unwrap();
+      toast({
+        description: isWishlisted ? 'Removed from wishlist' : 'Added to wishlist',
+      });
+    } catch {
+      toast({
+        description: 'Failed to update wishlist',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({
+        description: 'Link copied to clipboard',
+      });
+    } catch {
+      toast({
+        description: 'Failed to copy link',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleRetry = () => refetch();
@@ -331,7 +377,7 @@ export default function ProductDetails() {
                   {product.status ? 'Add to Cart' : 'Out of Stock'}
                 </Button>
                 <button
-                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  onClick={handleWishlist}
                   className={`p-4 rounded-xl border-2 transition-all ${
                     isWishlisted
                       ? 'border-red-200 bg-red-50 text-red-500'
@@ -342,7 +388,11 @@ export default function ProductDetails() {
                     className={`w-6 h-6 ${isWishlisted ? 'fill-current' : ''}`}
                   />
                 </button>
-                <button className="p-4 rounded-xl border-2 border-gray-200 hover:border-gray-300 text-gray-600 transition-all">
+                <button
+                  onClick={handleShare}
+                  className="p-4 rounded-xl border-2 border-gray-200 hover:border-gray-300 text-gray-600 transition-all"
+                  title="Copy link"
+                >
                   <Share2 className="w-6 h-6" />
                 </button>
               </div>

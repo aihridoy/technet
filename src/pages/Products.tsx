@@ -263,7 +263,6 @@ export default function Products() {
           Price Range
         </h3>
         <Slider
-          defaultValue={[2500]}
           max={2500}
           min={0}
           step={50}
