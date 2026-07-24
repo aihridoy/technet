@@ -1,9 +1,17 @@
 import { api } from '@/redux/api/apiSlice';
 
+const PRODUCTS_PER_PAGE = 12;
+
 const productApi = api.injectEndpoints({
   endpoints: (build) => ({
     getProducts: build.query({
       query: () => ({ url: '/products' }),
+      providesTags: ['Product'],
+    }),
+    getProductsPaginated: build.query({
+      query: ({ page = 1, limit = PRODUCTS_PER_PAGE }) => ({
+        url: `/products?page=${page}&limit=${limit}`,
+      }),
       providesTags: ['Product'],
     }),
     getProduct: build.query({
@@ -61,6 +69,7 @@ const productApi = api.injectEndpoints({
 export const {
   useGetProductQuery,
   useGetProductsQuery,
+  useGetProductsPaginatedQuery,
   useAddProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
