@@ -16,10 +16,12 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Eye,
   Download,
+  FileText,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { generateOrderPdf, generateAllOrdersPdf } from '@/lib/generateOrderPdf';
+import { useState } from 'react';
 
 interface Order {
   _id: string;
@@ -50,8 +52,33 @@ export default function Profile() {
     refetchOnMountOrArgChange: true,
     skip: !user?.email,
   });
+  const [exportingAll, setExportingAll] = useState(false);
+  const [exportingId, setExportingId] = useState<string | null>(null);
 
   const userOrders = data?.data || [];
+
+  const handleExportAll = async () => {
+    if (userOrders.length === 0) return;
+    setExportingAll(true);
+    try {
+      await generateAllOrdersPdf(userOrders);
+    } catch (err) {
+      console.error('Failed to generate PDF:', err);
+    } finally {
+      setExportingAll(false);
+    }
+  };
+
+  const handleExportOrder = async (order: Order) => {
+    setExportingId(order._id);
+    try {
+      await generateOrderPdf(order);
+    } catch (err) {
+      console.error('Failed to generate PDF:', err);
+    } finally {
+      setExportingId(null);
+    }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -175,9 +202,15 @@ export default function Profile() {
                     variant="outline"
                     size="sm"
                     className="hidden sm:flex items-center gap-2"
+                    onClick={handleExportAll}
+                    disabled={exportingAll}
                   >
-                    <Download className="h-4 w-4" />
-                    Export
+                    {exportingAll ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4" />
+                    )}
+                    {exportingAll ? 'Exporting...' : 'Export'}
                   </Button>
                 )}
               </div>
@@ -277,8 +310,15 @@ export default function Profile() {
                               variant="outline"
                               size="sm"
                               className="ml-4"
+                              onClick={() => handleExportOrder(order)}
+                              disabled={exportingId === order._id}
+                              title="Download PDF"
                             >
-                              <Eye className="h-4 w-4" />
+                              {exportingId === order._id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <FileText className="h-4 w-4" />
+                              )}
                             </Button>
                           </div>
                         </div>
