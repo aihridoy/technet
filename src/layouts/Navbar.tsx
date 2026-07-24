@@ -183,7 +183,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Menu */}
-          <ul className="hidden md:flex items-center space-x-1">
+          <ul className="hidden md:flex items-center gap-1">
             <li>
               <Button variant="link" asChild>
                 <Link to="/">Home</Link>
