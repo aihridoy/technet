@@ -233,6 +233,11 @@ export default function Navbar() {
                   <Link to="/profile">
                     <DropdownMenuItem>Profile</DropdownMenuItem>
                   </Link>
+                  {user.role === 'admin' && (
+                    <Link to="/admin">
+                      <DropdownMenuItem>Admin Dashboard</DropdownMenuItem>
+                    </Link>
+                  )}
                   {!user.email && (
                     <>
                       <Link to="/login">

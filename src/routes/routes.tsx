@@ -10,6 +10,10 @@ import Signup from '@/pages/Signup';
 import ProductDetails from '@/pages/ProductDetails';
 import PrivateRoute from './PrivateRoute';
 import { OrderConfirmation } from '@/pages/OrderSuccess';
+import AdminRoute from './AdminRoute';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
+import AdminProducts from '@/pages/admin/AdminProducts';
+import AdminOrders from '@/pages/admin/AdminOrders';
 
 const routes = createBrowserRouter([
   {
@@ -42,6 +46,30 @@ const routes = createBrowserRouter([
           <PrivateRoute>
             <Checkout />
           </PrivateRoute>
+        ),
+      },
+      {
+        path: '/admin',
+        element: (
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: '/admin/products',
+        element: (
+          <AdminRoute>
+            <AdminProducts />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: '/admin/orders',
+        element: (
+          <AdminRoute>
+            <AdminOrders />
+          </AdminRoute>
         ),
       },
     ],
