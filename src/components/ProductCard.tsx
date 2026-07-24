@@ -32,7 +32,9 @@ export default function ProductCard({ product }: IProps) {
             {product?.name}
           </h1>
         </Link>
-        <p className="text-sm sm:text-base">Rating: {product?.rating}</p>
+        <p className="text-sm sm:text-base">
+          Rating: {product?.rating} ({product?.ratingCount ?? 0})
+        </p>
         <p className="text-xs sm:text-sm">
           Availability: {product?.status ? 'In stock' : 'Out of stock'}
         </p>
