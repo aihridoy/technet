@@ -4,11 +4,35 @@ const productApi = api.injectEndpoints({
   endpoints: (build) => ({
     getProducts: build.query({
       query: () => ({ url: '/products' }),
+      providesTags: ['Product'],
     }),
     getProduct: build.query({
       query: (id) => ({
         url: `/product/${id}`,
       }),
+    }),
+    addProduct: build.mutation({
+      query: (data) => ({
+        url: '/product',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Product'],
+    }),
+    updateProduct: build.mutation({
+      query: ({ id, data }) => ({
+        url: `/product/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['Product'],
+    }),
+    deleteProduct: build.mutation({
+      query: (id) => ({
+        url: `/product/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Product'],
     }),
     addReview: build.mutation({
       query: ({ productId, data }) => ({
@@ -37,6 +61,9 @@ const productApi = api.injectEndpoints({
 export const {
   useGetProductQuery,
   useGetProductsQuery,
+  useAddProductMutation,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
   useGetReviewsQuery,
   useAddReviewMutation,
   useSearchProductsQuery,

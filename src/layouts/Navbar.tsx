@@ -15,7 +15,7 @@ import logo from '../assets/images/technet-logo.png';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { setUser } from '@/redux/features/user/userSlice';
+import { logoutUser } from '@/redux/features/user/userSlice';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSearchProductsQuery } from '@/redux/features/products/productApi';
 
@@ -85,7 +85,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     signOut(auth).then(() => {
-      dispatch(setUser(null));
+      dispatch(logoutUser());
     });
   };
 
@@ -233,6 +233,11 @@ export default function Navbar() {
                   <Link to="/profile">
                     <DropdownMenuItem>Profile</DropdownMenuItem>
                   </Link>
+                  {user.role === 'admin' && (
+                    <Link to="/admin">
+                      <DropdownMenuItem>Admin Dashboard</DropdownMenuItem>
+                    </Link>
+                  )}
                   {!user.email && (
                     <>
                       <Link to="/login">
