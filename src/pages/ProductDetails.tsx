@@ -4,72 +4,61 @@ import { addToCart } from '@/redux/features/cart/cartSlice';
 import { useGetProductQuery } from '@/redux/features/products/productApi';
 import { useAppDispatch } from '@/redux/hook';
 import { IProduct } from '@/types/globalTypes';
-import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from '../components/ui/use-toast';
+import {
+  Star,
+  ShoppingCart,
+  Heart,
+  Share2,
+  ChevronRight,
+  Truck,
+  Shield,
+  RotateCcw,
+  Check,
+  Minus,
+  Plus,
+} from 'lucide-react';
 
-// Loading skeleton for product details
+// Loading skeleton
 const ProductDetailsSkeleton = () => (
-  <>
-    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center border-b border-gray-300 p-4 md:p-8 gap-6">
-      {/* Product Image Skeleton */}
-      <div className="w-full md:w-1/2 flex justify-center">
-        <div className="animate-pulse bg-gray-200 rounded-lg h-[400px] w-full max-w-md"></div>
-      </div>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    {/* Breadcrumb skeleton */}
+    <div className="flex items-center gap-2 mb-8">
+      <div className="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
+      <div className="h-4 bg-gray-200 rounded w-4 animate-pulse"></div>
+      <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+    </div>
 
-      {/* Product Info Skeleton */}
-      <div className="w-full md:w-1/2 space-y-4">
-        <div className="animate-pulse space-y-4">
-          {/* Title skeleton */}
-          <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+      {/* Image skeleton */}
+      <div className="aspect-square bg-gray-100 rounded-3xl animate-pulse"></div>
 
-          {/* Rating skeleton */}
-          <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-
-          {/* Features skeleton */}
-          <div className="space-y-2">
-            <div className="h-4 bg-gray-200 rounded w-full"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-            <div className="h-4 bg-gray-200 rounded w-4/5"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          </div>
-
-          {/* Button skeleton */}
-          <div className="h-10 bg-gray-200 rounded w-32"></div>
+      {/* Info skeleton */}
+      <div className="space-y-6">
+        <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+        <div className="h-10 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+        <div className="flex items-center gap-3">
+          <div className="h-8 bg-gray-200 rounded w-32 animate-pulse"></div>
+          <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+        </div>
+        <div className="h-12 bg-gray-200 rounded w-40 animate-pulse"></div>
+        <div className="space-y-3">
+          <div className="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6 animate-pulse"></div>
+          <div className="h-4 bg-gray-200 rounded w-4/6 animate-pulse"></div>
+        </div>
+        <div className="flex gap-4">
+          <div className="h-14 bg-gray-200 rounded-xl flex-1 animate-pulse"></div>
+          <div className="h-14 bg-gray-200 rounded-xl flex-1 animate-pulse"></div>
         </div>
       </div>
     </div>
-
-    {/* Reviews section skeleton */}
-    <div className="max-w-7xl mx-auto p-4 md:p-8">
-      <div className="animate-pulse space-y-4">
-        <div className="h-6 bg-gray-200 rounded w-48"></div>
-        <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div
-              key={index}
-              className="border border-gray-200 rounded-lg p-4 space-y-3"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-24"></div>
-                  <div className="h-3 bg-gray-200 rounded w-16"></div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </>
+  </div>
 );
 
-// Error component for product details
+// Error component
 const ProductDetailsError = ({
   onRetry,
   onGoBack,
@@ -77,8 +66,8 @@ const ProductDetailsError = ({
   onRetry: () => void;
   onGoBack: () => void;
 }) => (
-  <div className="max-w-7xl mx-auto p-4 md:p-8">
-    <div className="text-center py-16">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="text-center py-16 bg-white rounded-3xl border border-gray-100">
       <div className="text-red-400 mb-6">
         <svg
           className="w-20 h-20 mx-auto"
@@ -97,51 +86,18 @@ const ProductDetailsError = ({
       <h2 className="text-2xl font-semibold text-gray-900 mb-4">
         Product Not Found
       </h2>
-      <p className="text-gray-600 mb-8 max-w-md mx-auto">
+      <p className="text-gray-500 mb-8 max-w-md mx-auto">
         We couldn't load the product details. The product might not exist or
         there was a network error.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button onClick={onRetry} variant="default" className="px-6 py-2">
+        <Button onClick={onRetry} className="px-6 py-3 rounded-xl">
           Try Again
         </Button>
-        <Button onClick={onGoBack} variant="outline" className="px-6 py-2">
+        <Button onClick={onGoBack} variant="outline" className="px-6 py-3 rounded-xl">
           Go Back to Products
         </Button>
       </div>
-    </div>
-  </div>
-);
-
-// Product not found component
-const ProductNotFound = ({ onGoBack }: { onGoBack: () => void }) => (
-  <div className="max-w-7xl mx-auto p-4 md:p-8">
-    <div className="text-center py-16">
-      <div className="text-gray-400 mb-6">
-        <svg
-          className="w-20 h-20 mx-auto"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.346 0-4.462.725-6.043 1.977M6.343 8.343A8 8 0 1019.657 15.657 8 8 0 006.343 8.343z"
-          />
-        </svg>
-      </div>
-      <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-        Product Not Available
-      </h2>
-      <p className="text-gray-600 mb-8 max-w-md mx-auto">
-        The product you're looking for is no longer available or has been
-        removed.
-      </p>
-      <Button onClick={onGoBack} variant="default" className="px-6 py-2">
-        Browse Other Products
-      </Button>
     </div>
   </div>
 );
@@ -151,137 +107,276 @@ export default function ProductDetails() {
   const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useGetProductQuery(id);
   const dispatch = useAppDispatch();
+  const [quantity, setQuantity] = useState(1);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  const handleAddProduct = (product: IProduct) => {
-    dispatch(addToCart(product));
+  const product: IProduct | undefined = data;
+
+  const handleAddProduct = () => {
+    if (!product) return;
+    for (let i = 0; i < quantity; i++) {
+      dispatch(addToCart(product));
+    }
     toast({
-      description: 'Product Added',
+      description: `${quantity} item${quantity > 1 ? 's' : ''} added to cart`,
     });
   };
 
-  const handleRetry = () => {
-    refetch();
-  };
-
-  const handleGoBack = () => {
-    navigate('/products');
-  };
+  const handleRetry = () => refetch();
+  const handleGoBack = () => navigate('/products');
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+  }, [id]);
 
-  // Handle loading state
-  if (isLoading) {
-    return <ProductDetailsSkeleton />;
-  }
-
-  // Handle error state
-  if (isError) {
+  if (isLoading) return <ProductDetailsSkeleton />;
+  if (isError) return <ProductDetailsError onRetry={handleRetry} onGoBack={handleGoBack} />;
+  if (!product) {
     return (
-      <ProductDetailsError onRetry={handleRetry} onGoBack={handleGoBack} />
-    );
-  }
-
-  // Handle case where data is null/undefined but no error
-  if (!data) {
-    return <ProductNotFound onGoBack={handleGoBack} />;
-  }
-
-  return (
-    <>
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center border-b border-gray-300 p-4 md:p-8 gap-6">
-        {/* Product Image */}
-        <div className="w-full md:w-1/2 flex justify-center">
-          <img
-            src={data.image}
-            alt={data.name || 'Product image'}
-            className="object-contain max-h-[400px] w-full"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src =
-                'https://via.placeholder.com/400x400?text=Image+Not+Available';
-            }}
-          />
-        </div>
-
-        {/* Product Info */}
-        <div className="w-full md:w-1/2 space-y-4">
-          <h1 className="text-2xl md:text-3xl font-semibold">
-            {data.name || 'Product Name Not Available'}
-          </h1>
-
-          {data.rating && (
-            <div className="flex items-center space-x-2">
-              <span className="text-lg md:text-xl">Rating:</span>
-              <div className="flex items-center">
-                <span className="text-lg md:text-xl font-medium">
-                  {data.rating} <span className="text-sm text-gray-500">({data.ratingCount ?? 0} reviews)</span>
-                </span>
-                <div className="flex ml-2">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <svg
-                      key={index}
-                      className={`w-5 h-5 ${
-                        index < Math.floor(data.rating)
-                          ? 'text-yellow-400'
-                          : 'text-gray-300'
-                      }`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {data.price && (
-            <div className="text-xl md:text-2xl font-bold text-green-600">
-              ${data.price}
-            </div>
-          )}
-
-          {data.features && data.features.length > 0 && (
-            <div>
-              <h3 className="text-lg font-medium mb-2">Features:</h3>
-              <ul className="space-y-1 text-base md:text-lg list-disc list-inside">
-                {data.features.map((feature: string, index: number) => (
-                  <li key={`${feature}-${index}`}>{feature}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {data.status !== undefined && (
-            <div className="flex items-center space-x-2">
-              <span className="text-base md:text-lg">Availability:</span>
-              <span
-                className={`px-2 py-1 rounded-full text-sm font-medium ${
-                  data.status
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-red-100 text-red-800'
-                }`}
-              >
-                {data.status ? 'In Stock' : 'Out of Stock'}
-              </span>
-            </div>
-          )}
-
-          <Button
-            onClick={() => handleAddProduct(data)}
-            className="w-full md:w-auto"
-            disabled={data.status === false}
-          >
-            {data.status === false ? 'Out of Stock' : 'Add to Cart'}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center py-16 bg-white rounded-3xl border border-gray-100">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Product Not Available
+          </h2>
+          <p className="text-gray-500 mb-8">
+            The product you're looking for is no longer available.
+          </p>
+          <Button onClick={handleGoBack} className="px-6 py-3 rounded-xl">
+            Browse Products
           </Button>
         </div>
       </div>
+    );
+  }
 
-      {/* Product Reviews */}
-      {id && <ProductReview id={id} />}
-    </>
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating - fullStars >= 0.5;
+
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push(
+          <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+        );
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push(
+          <div key={i} className="relative">
+            <Star className="w-5 h-5 text-gray-300" />
+            <div className="absolute inset-0 overflow-hidden w-1/2">
+              <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+            </div>
+          </div>
+        );
+      } else {
+        stars.push(
+          <Star key={i} className="w-5 h-5 text-gray-300" />
+        );
+      }
+    }
+    return stars;
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumbs */}
+        <nav className="flex items-center text-sm text-gray-500 mb-8">
+          <Link to="/" className="hover:text-gray-900 transition-colors">Home</Link>
+          <ChevronRight className="w-4 h-4 mx-2" />
+          <Link to="/products" className="hover:text-gray-900 transition-colors">Products</Link>
+          <ChevronRight className="w-4 h-4 mx-2" />
+          <span className="text-gray-900 font-medium truncate max-w-[200px]">
+            {product.name}
+          </span>
+        </nav>
+
+        {/* Main Product Section */}
+        <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
+            {/* Image Section */}
+            <div className="relative bg-gray-50 p-8 lg:p-12">
+              {!imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+                </div>
+              )}
+              <img
+                src={product.image}
+                alt={product.name}
+                className={`w-full aspect-square object-cover rounded-2xl transition-all duration-500 hover:scale-105 ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                onLoad={() => setImageLoaded(true)}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://via.placeholder.com/600x600?text=No+Image';
+                  setImageLoaded(true);
+                }}
+              />
+
+              {/* Category Badge */}
+              {product.category && (
+                <div className="absolute top-4 left-4">
+                  <span className="bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-semibold px-4 py-2 rounded-full shadow-sm">
+                    {product.category}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Info Section */}
+            <div className="p-8 lg:p-12 flex flex-col">
+              {/* Status Badge */}
+              <div className="mb-4">
+                {product.status ? (
+                  <span className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-sm font-medium px-3 py-1.5 rounded-full">
+                    <Check className="w-4 h-4" />
+                    In Stock
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 bg-red-50 text-red-700 text-sm font-medium px-3 py-1.5 rounded-full">
+                    Out of Stock
+                  </span>
+                )}
+              </div>
+
+              {/* Product Name */}
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+                {product.name}
+              </h1>
+
+              {/* Rating */}
+              {product.rating > 0 && (
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-1">
+                    {renderStars(product.rating)}
+                  </div>
+                  <span className="text-lg font-semibold text-gray-900">
+                    {product.rating}
+                  </span>
+                  <span className="text-gray-500">
+                    ({product.ratingCount ?? 0} reviews)
+                  </span>
+                </div>
+              )}
+
+              {/* Price */}
+              <div className="mb-6">
+                <span className="text-4xl font-bold text-gray-900">
+                  ${product.price}
+                </span>
+                <span className="text-sm text-gray-500 ml-2">tax included</span>
+              </div>
+
+              {/* Features */}
+              {product.features && product.features.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
+                    Key Features
+                  </h3>
+                  <ul className="space-y-3">
+                    {product.features.map((feature: string, index: number) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <Check className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <span className="text-gray-600">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Quantity Selector */}
+              {product.status && (
+                <div className="mb-6">
+                  <label className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3 block">
+                    Quantity
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden">
+                      <button
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="p-3 hover:bg-gray-50 transition-colors"
+                        disabled={quantity <= 1}
+                      >
+                        <Minus className="w-4 h-4 text-gray-600" />
+                      </button>
+                      <span className="w-12 text-center font-semibold text-gray-900">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="p-3 hover:bg-gray-50 transition-colors"
+                      >
+                        <Plus className="w-4 h-4 text-gray-600" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 mt-auto pt-6">
+                <Button
+                  onClick={handleAddProduct}
+                  disabled={!product.status}
+                  className={`flex-1 py-6 text-base font-semibold rounded-xl transition-all ${
+                    product.status
+                      ? 'bg-gray-900 hover:bg-gray-800 text-white'
+                      : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  <ShoppingCart className="w-5 h-5 mr-2" />
+                  {product.status ? 'Add to Cart' : 'Out of Stock'}
+                </Button>
+                <button
+                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    isWishlisted
+                      ? 'border-red-200 bg-red-50 text-red-500'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                  }`}
+                >
+                  <Heart
+                    className={`w-6 h-6 ${isWishlisted ? 'fill-current' : ''}`}
+                  />
+                </button>
+                <button className="p-4 rounded-xl border-2 border-gray-200 hover:border-gray-300 text-gray-600 transition-all">
+                  <Share2 className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Trust Badges */}
+              <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-100">
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                    <Truck className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span className="text-xs text-gray-500">Free Shipping</span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span className="text-xs text-gray-500">2 Year Warranty</span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                    <RotateCcw className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span className="text-xs text-gray-500">30 Day Returns</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-8 bg-white rounded-3xl border border-gray-100 p-8 lg:p-12">
+          <ProductReview id={id!} />
+        </div>
+      </div>
+    </div>
   );
 }

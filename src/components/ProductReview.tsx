@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { FiSend } from 'react-icons/fi';
-import { Star } from 'lucide-react';
+import { Star, MessageSquare } from 'lucide-react';
 import StarRatingInput from './StarRatingInput';
 import {
   useGetReviewsQuery,
@@ -39,6 +39,9 @@ export default function ProductReview({ id }: IProps) {
       }).unwrap();
       setInputValue('');
       setSelectedRating(0);
+      toast({
+        description: 'Review submitted successfully!',
+      });
     } catch (err) {
       toast({
         description: 'Failed to submit review. Please try again.',
@@ -53,69 +56,212 @@ export default function ProductReview({ id }: IProps) {
 
   const reviews: IReview[] = data?.data || [];
 
+  // Calculate rating distribution
+  const ratingDistribution = [5, 4, 3, 2, 1].map((rating) => {
+    const count = reviews.filter((r) => r.rating === rating).length;
+    const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+    return { rating, count, percentage };
+  });
+
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0;
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getAvatarColor = (name: string) => {
+    const colors = [
+      'bg-blue-500',
+      'bg-green-500',
+      'bg-purple-500',
+      'bg-pink-500',
+      'bg-indigo-500',
+      'bg-yellow-500',
+      'bg-red-500',
+      'bg-teal-500',
+    ];
+    const index = name.charCodeAt(0) % colors.length;
+    return colors[index];
+  };
+
   return (
-    <div className="max-w-7xl mx-auto mt-5 px-4 md:px-0 mb-5">
-      <form
-        className="flex flex-col gap-3 border border-gray-200 rounded-lg p-4"
-        onSubmit={handleSubmit}
-      >
-        <StarRatingInput value={selectedRating} onChange={setSelectedRating} />
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 items-end sm:items-center">
+    <div>
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+          <MessageSquare className="w-5 h-5 text-gray-600" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Customer Reviews</h2>
+          <p className="text-sm text-gray-500">
+            {reviews.length} review{reviews.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+      </div>
+
+      {/* Reviews Summary */}
+      {reviews.length > 0 && (
+        <div className="flex flex-col sm:flex-row gap-8 mb-10 pb-10 border-b border-gray-100">
+          {/* Average Rating */}
+          <div className="flex flex-col items-center justify-center sm:min-w-[160px]">
+            <span className="text-5xl font-bold text-gray-900">
+              {averageRating.toFixed(1)}
+            </span>
+            <div className="flex items-center gap-1 my-2">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-5 h-5 ${
+                    i < Math.round(averageRating)
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-sm text-gray-500">
+              {reviews.length} review{reviews.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+
+          {/* Rating Distribution */}
+          <div className="flex-1 space-y-2">
+            {ratingDistribution.map(({ rating, count, percentage }) => (
+              <div key={rating} className="flex items-center gap-3">
+                <span className="text-sm text-gray-600 w-4">{rating}</span>
+                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-yellow-400 rounded-full transition-all duration-500"
+                    style={{ width: `${percentage}%` }}
+                  />
+                </div>
+                <span className="text-sm text-gray-500 w-8 text-right">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Write a Review Form */}
+      <div className="bg-gray-50 rounded-2xl p-6 mb-10">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Write a Review</h3>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <StarRatingInput value={selectedRating} onChange={setSelectedRating} />
           <Textarea
-            className="flex-1 min-h-[60px] sm:min-h-[40px]"
+            className="min-h-[120px] bg-white border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
             placeholder={
-              user?.email ? 'Write a review...' : 'Log in to write a review'
+              user?.email
+                ? 'Share your experience with this product...'
+                : 'Log in to write a review'
             }
             value={inputValue}
             onChange={handleChange}
             disabled={!user?.email}
           />
-          <Button
-            type="submit"
-            disabled={!user?.email || isLoading}
-            className="rounded-full h-10 w-10 p-2 text-[25px] flex-shrink-0"
-          >
-            <FiSend />
-          </Button>
-        </div>
-      </form>
-
-      <div className="mt-8 space-y-5">
-        {reviews.map((review) => (
-          <div
-            key={review._id}
-            className="flex gap-3 items-start bg-gray-50 p-3 rounded-lg"
-          >
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>
-                {review.authorName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-sm sm:text-base">
-                  {review.authorName}
-                </span>
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Star
-                      key={index}
-                      className={`w-3.5 h-3.5 ${
-                        index < review.rating
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-300'
-                      }`}
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              disabled={!user?.email || isLoading || !inputValue.trim() || selectedRating === 0}
+              className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl"
+            >
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
                     />
-                  ))}
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                  Submitting...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <FiSend className="w-4 h-4" />
+                  Submit Review
+                </span>
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* Reviews List */}
+      <div className="space-y-4">
+        {reviews.length > 0 ? (
+          reviews.map((review) => (
+            <div
+              key={review._id}
+              className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-sm transition-shadow"
+            >
+              <div className="flex items-start gap-4">
+                <Avatar className="w-12 h-12 flex-shrink-0">
+                  <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(review.authorName)}&background=random`} />
+                  <AvatarFallback className={`${getAvatarColor(review.authorName)} text-white font-semibold`}>
+                    {getInitials(review.authorName)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                    <span className="font-semibold text-gray-900">
+                      {review.authorName}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {[...Array(5)].map((_, index) => (
+                          <Star
+                            key={index}
+                            className={`w-4 h-4 ${
+                              index < review.rating
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-200'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-sm text-gray-400">
+                        {formatDate(review.createdAt)}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 leading-relaxed">{review.comment}</p>
                 </div>
               </div>
-              <p className="text-sm sm:text-base break-words mt-1">
-                {review.comment}
-              </p>
             </div>
+          ))
+        ) : (
+          <div className="text-center py-12 bg-gray-50 rounded-2xl">
+            <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500">No reviews yet. Be the first to review!</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

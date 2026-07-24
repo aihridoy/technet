@@ -8,6 +8,7 @@ export interface IProduct {
   rating: number;
   ratingCount: number;
   quantity?: number;
+  category?: string;
 }
 
 export interface IReview {
