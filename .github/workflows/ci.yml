@@ -16,5 +16,10 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
+      # Intentionally not `npm run lint`: that script's --max-warnings 0 fails on
+      # a pre-existing warning backlog (button.tsx, radio-group.tsx, sheet.tsx,
+      # Checkout.tsx, userSlice.ts). This still fails on real errors; local
+      # `npm run lint` stays strict. Converge back to one command once the
+      # backlog's cleared.
       - run: npx eslint src --ext ts,tsx
       - run: npm test
