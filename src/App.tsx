@@ -3,7 +3,7 @@ import { Toaster } from './components/ui/Toaster';
 import MainLayout from './layouts/MainLayout';
 import { auth } from './lib/firebase';
 import { useAppDispatch } from './redux/hook';
-import { setLoading, setUser } from './redux/features/user/userSlice';
+import { setLoading, logoutUser, fetchCurrentUser } from './redux/features/user/userSlice';
 import { useEffect } from 'react';
 
 function App() {
@@ -11,11 +11,10 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      dispatch(setLoading(true));
-      if (user) {
-        dispatch(setUser(user.email));
-        dispatch(setLoading(false));
+      if (user?.email) {
+        dispatch(fetchCurrentUser(user.email));
       } else {
+        dispatch(logoutUser());
         dispatch(setLoading(false));
       }
     });
