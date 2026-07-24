@@ -236,9 +236,9 @@ export default function Navbar() {
                 )}
               </Link>
             </li>
-            <li className="ml-2">
+            <li>
               <DropdownMenu>
-                <DropdownMenuTrigger className="outline-none">
+                <DropdownMenuTrigger className="outline-none p-2 block">
                   <Avatar>
                     <AvatarImage src="https://github.com/shadcn.png" />
                     <AvatarFallback>CN</AvatarFallback>
