@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
 } from '../components/ui/dropdown-menu';
 import { HiOutlineSearch, HiOutlineMenu, HiX } from 'react-icons/hi';
+import { Heart } from 'lucide-react';
 import Cart from '../components/Cart';
 import logo from '../assets/images/technet-logo.png';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
@@ -18,6 +19,7 @@ import { auth } from '@/lib/firebase';
 import { logoutUser } from '@/redux/features/user/userSlice';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSearchProductsQuery } from '@/redux/features/products/productApi';
+import { useGetWishlistQuery } from '@/redux/features/wishlist/wishlistApi';
 
 interface Product {
   _id: string;
@@ -39,6 +41,11 @@ export default function Navbar() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  const { data: wishlistData } = useGetWishlistQuery(undefined, {
+    skip: !user?.email,
+  });
+  const wishlistCount = wishlistData?.data?.length || 0;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -219,6 +226,16 @@ export default function Navbar() {
             <li>
               <Cart />
             </li>
+            <li>
+              <Link to="/wishlist" className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <Heart className="w-5 h-5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+            </li>
             <li className="ml-5">
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
@@ -307,6 +324,17 @@ export default function Navbar() {
             </Link>
             <div className="flex items-center space-x-3">
               <Cart />
+              <Link to="/wishlist" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="link" className="flex items-center gap-2">
+                  <Heart className="w-4 h-4" />
+                  Wishlist
+                  {wishlistCount > 0 && (
+                    <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Button>
+              </Link>
             </div>
             <div className="border-t pt-3">
               {!user.email ? (
