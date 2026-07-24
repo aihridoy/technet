@@ -223,19 +223,17 @@ export default function Navbar() {
                 {showSearchResults && <SearchPopup />}
               </div>
             </li>
-            <li>
+            <li className="flex items-center">
               <Cart />
             </li>
             <li>
-              <Link to="/wishlist">
-                <Button variant="ghost" className="relative">
-                  <Heart className="w-5 h-5" />
-                  {wishlistCount > 0 && (
-                    <span className="absolute -top-2 -right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {wishlistCount}
-                    </span>
-                  )}
-                </Button>
+              <Link to="/wishlist" className="relative p-2 text-gray-700 hover:text-red-500 transition-colors">
+                <Heart className="w-5 h-5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
               </Link>
             </li>
             <li className="ml-5">
@@ -326,15 +324,17 @@ export default function Navbar() {
             </Link>
             <div className="flex items-center space-x-3">
               <Cart />
-              <Link to="/wishlist" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="ghost" className="relative">
-                  <Heart className="w-5 h-5" />
-                  {wishlistCount > 0 && (
-                    <span className="absolute -top-2 -right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {wishlistCount}
-                    </span>
-                  )}
-                </Button>
+              <Link
+                to="/wishlist"
+                onClick={() => setMobileMenuOpen(false)}
+                className="relative p-2 text-gray-700 hover:text-red-500 transition-colors"
+              >
+                <Heart className="w-5 h-5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
               </Link>
             </div>
             <div className="border-t pt-3">
