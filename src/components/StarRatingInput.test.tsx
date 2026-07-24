@@ -14,7 +14,7 @@ describe('StarRatingInput', () => {
   });
 
   it('renders exactly 5 stars', () => {
-    render(<StarRatingInput value={3} onChange={() => {}} />);
+    render(<StarRatingInput value={3} onChange={vi.fn()} />);
     expect(screen.getAllByRole('button')).toHaveLength(5);
   });
 });
