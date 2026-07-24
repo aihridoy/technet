@@ -224,10 +224,10 @@ export default function Products() {
             </h1>
             <div className="w-full">
               <Slider
-                defaultValue={[150]}
-                max={150}
+                defaultValue={[2500]}
+                max={2500}
                 min={0}
-                step={1}
+                step={10}
                 onValueChange={(value) => handleSlider(value)}
                 className="w-full"
               />
