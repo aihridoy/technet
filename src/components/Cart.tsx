@@ -38,17 +38,17 @@ export default function Cart() {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" className="relative">
-          <HiOutlineShoppingCart size="25" />
+        <button className="relative p-2 text-gray-700 hover:text-blue-600 transition-colors">
+          <HiOutlineShoppingCart size="22" />
           {typedProducts.length > 0 && (
-            <span className="absolute -top-2 -right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
               {typedProducts.reduce(
                 (acc, product) => acc + (product.quantity || 0),
                 0
               )}
             </span>
           )}
-        </Button>
+        </button>
       </SheetTrigger>
 
       <SheetContent className="overflow-auto relative w-full sm:max-w-lg">

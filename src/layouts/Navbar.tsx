@@ -236,7 +236,7 @@ export default function Navbar() {
                 )}
               </Link>
             </li>
-            <li className="ml-5">
+            <li className="ml-2">
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
                   <Avatar>
